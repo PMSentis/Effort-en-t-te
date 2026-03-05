@@ -7,6 +7,7 @@ import { IfcViewerAPI } from "web-ifc-viewer";
 
 const state = {
   ifcLoaded: false,
+  selectedFile: null,
   viewer: null,
   ifcModelID: null,
   // Dans une version ultérieure, ces deux tableaux viendront directement de l’IFC :
@@ -31,6 +32,7 @@ const dirSeismeSelect = document.getElementById("dirSeisme");
 const btnReset = document.getElementById("btn-reset");
 const btnCalcul = document.getElementById("btn-calcul");
 const resultsDiv = document.getElementById("results");
+const btnLoadIfc = document.getElementById("btn-load-ifc");
 
 // --- INITIALISATION DE LA VUE 3D (IfcViewerAPI) -----------------------------
 
@@ -50,9 +52,30 @@ initIfcViewer();
 
 // --- GESTION DU FICHIER IFC ------------------------------------------------
 
-fileInput.addEventListener("change", async (event) => {
-  const file = event.target.files?.[0];
-  if (!file) return;
+// Étape 1 : l’utilisateur choisit un fichier (mais on ne charge pas encore le modèle)
+fileInput.addEventListener("change", (event) => {
+  const file = event.target.files?.[0] || null;
+  state.selectedFile = file;
+
+  if (!file) {
+    updateTagEtEtat("IFC non chargé", "ko");
+    viewerOverlay.querySelector("span").textContent =
+      "Sélectionne un fichier IFC puis clique sur « Charger le modèle ».";
+    return;
+  }
+
+  updateTagEtEtat(`Fichier sélectionné : ${file.name}`, "loading");
+  viewerOverlay.querySelector("span").textContent =
+    "Fichier sélectionné. Clique sur « Charger le modèle » pour l’afficher.";
+});
+
+// Étape 2 : clic sur le bouton pour réellement charger et afficher le modèle
+btnLoadIfc.addEventListener("click", async () => {
+  const file = state.selectedFile;
+  if (!file) {
+    alert("Aucun fichier IFC sélectionné. Choisis un fichier avant de charger.");
+    return;
+  }
 
   updateTagEtEtat("Chargement IFC…", "loading");
   viewerOverlay.querySelector("span").textContent =
@@ -62,6 +85,10 @@ fileInput.addEventListener("change", async (event) => {
     if (!state.viewer) {
       initIfcViewer();
     }
+
+    // Optionnel : configuration du chemin des fichiers WASM si nécessaire
+    // (utile sur GitHub Pages / CDN)
+    // state.viewer.IFC.setWasmPath("https://cdn.jsdelivr.net/npm/web-ifc@0.0.47/");
 
     // Nettoie un éventuel modèle précédent
     if (state.ifcModelID !== null) {
@@ -113,11 +140,11 @@ fileInput.addEventListener("change", async (event) => {
   } catch (e) {
     console.error(e);
     alert(
-      "Erreur lors du chargement de l’IFC. Vérifie que la page est servie via un petit serveur web local (et non directement en file://)."
+      "Erreur lors du chargement de l’IFC. Vérifie l’URL (GitHub Pages / hébergement) et consulte la console du navigateur pour le détail."
     );
     updateTagEtEtat("Erreur de chargement IFC", "ko");
     viewerOverlay.querySelector("span").textContent =
-      "Échec du chargement. Vérifie le serveur local et le fichier IFC.";
+      "Échec du chargement. Vérifie l’hébergement et le fichier IFC.";
   }
 });
 
