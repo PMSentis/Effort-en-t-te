@@ -30,6 +30,13 @@
         z-index: 10;
       }
 
+      .header-main {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
       header h1 {
         margin: 0;
         font-size: 1.4rem;
@@ -40,6 +47,19 @@
         margin: 0.15rem 0 0;
         font-size: 0.8rem;
         opacity: 0.9;
+      }
+
+      .version-pill {
+        align-self: center;
+        padding: 0.1rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(191, 219, 254, 0.8);
+        color: #e5e7eb;
+        white-space: nowrap;
       }
 
       main {
@@ -325,8 +345,13 @@
   </head>
   <body>
     <header>
-      <h1>Efforts en tête de mur</h1>
-      <p>Prototype de calcul sismique basé sur un modèle IFC (vue 3D + charges globales).</p>
+      <div class="header-main">
+        <div>
+          <h1>Efforts en tête de mur</h1>
+          <p>Prototype de calcul sismique basé sur un modèle IFC (vue 3D + charges globales).</p>
+        </div>
+        <span id="app-version" class="version-pill">V0.0.0</span>
+      </div>
     </header>
 
     <main>

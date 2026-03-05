@@ -3,6 +3,9 @@
 
 import { IfcViewerAPI } from "web-ifc-viewer";
 
+// Numéro de version de l'appli (à incrémenter à chaque itération)
+const APP_VERSION = "V1.1.1";
+
 // --- ÉTAT GLOBAL SIMPLIFIÉ -------------------------------------------------
 
 const state = {
@@ -33,6 +36,12 @@ const btnReset = document.getElementById("btn-reset");
 const btnCalcul = document.getElementById("btn-calcul");
 const resultsDiv = document.getElementById("results");
 const btnLoadIfc = document.getElementById("btn-load-ifc");
+const versionLabel = document.getElementById("app-version");
+
+if (versionLabel) {
+  versionLabel.textContent = APP_VERSION;
+}
+console.log("Efforts en tête de mur - version", APP_VERSION);
 
 // --- INITIALISATION DE LA VUE 3D (IfcViewerAPI) -----------------------------
 
