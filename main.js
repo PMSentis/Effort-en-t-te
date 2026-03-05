@@ -4,7 +4,7 @@
 import { IfcViewerAPI } from "web-ifc-viewer";
 
 // Numéro de version de l'appli (à incrémenter à chaque itération)
-const APP_VERSION = "V1.1.1";
+const APP_VERSION = "V1.1.2";
 
 // --- ÉTAT GLOBAL SIMPLIFIÉ -------------------------------------------------
 
