@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Efforts en tête de mur - IFC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        color: #111827;
+        background: #0f172a;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      header {
+        padding: 0.75rem 1.5rem;
+        background: radial-gradient(circle at top left, #22d3ee, #1d4ed8);
+        color: white;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        letter-spacing: 0.04em;
+      }
+
+      header p {
+        margin: 0.15rem 0 0;
+        font-size: 0.8rem;
+        opacity: 0.9;
+      }
+
+      main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1.15fr);
+        gap: 0.75rem;
+        padding: 0.75rem;
+      }
+
+      @media (max-width: 900px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: linear-gradient(145deg, #020617, #020617 40%, #0b1120);
+        border-radius: 0.75rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+      }
+
+      .panel h2 {
+        margin: 0 0 0.5rem;
+        font-size: 0.95rem;
+        color: #e5e7eb;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+      }
+
+      .panel small {
+        display: block;
+        margin-top: -0.25rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.7rem;
+        color: #9ca3af;
+      }
+
+      .controls-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+        margin-bottom: 0.6rem;
+      }
+
+      label {
+        font-size: 0.78rem;
+        color: #cbd5f5;
+      }
+
+      input[type="file"],
+      input[type="number"],
+      select {
+        font-size: 0.8rem;
+      }
+
+      input[type="file"] {
+        color: #e5e7eb;
+      }
+
+      .file-input-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        padding: 0.25rem 0.9rem;
+      }
+
+      .file-input-wrapper span {
+        font-size: 0.78rem;
+        color: #e5e7eb;
+        white-space: nowrap;
+      }
+
+      .file-input-wrapper input[type="file"] {
+        border: none;
+        padding: 0;
+        background: transparent;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 999px;
+        padding: 0.15rem 0.6rem;
+        font-size: 0.7rem;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        color: #e5e7eb;
+      }
+
+      .tag-dot {
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 20%, #22c55e, #16a34a);
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+      }
+
+      #viewer-container {
+        width: 100%;
+        height: 60vh;
+        min-height: 320px;
+        border-radius: 0.75rem;
+        background: radial-gradient(circle at top, #1e293b, #020617);
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        position: relative;
+      }
+
+      #viewer-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        background: radial-gradient(circle at top, rgba(30, 64, 175, 0.32), transparent);
+      }
+
+      #viewer-overlay span {
+        padding: 0.5rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        color: #e5e7eb;
+        font-size: 0.75rem;
+        backdrop-filter: blur(8px);
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.4rem 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+
+      .field label {
+        font-size: 0.72rem;
+        color: #9ca3af;
+      }
+
+      .field input,
+      .field select {
+        padding: 0.25rem 0.4rem;
+        border-radius: 0.4rem;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(15, 23, 42, 0.95);
+        color: #e5e7eb;
+        outline: none;
+      }
+
+      .field input:focus,
+      .field select:focus {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+      }
+
+      .button-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      button {
+        border-radius: 999px;
+        border: none;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.78rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        letter-spacing: 0.03em;
+      }
+
+      .primary-btn {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #022c22;
+        box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+      }
+
+      .primary-btn:disabled {
+        opacity: 0.5;
+        cursor: default;
+        box-shadow: none;
+      }
+
+      .ghost-btn {
+        background: transparent;
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        color: #e5e7eb;
+      }
+
+      .results {
+        border-radius: 0.65rem;
+        padding: 0.55rem 0.7rem;
+        background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), rgba(15, 23, 42, 0.98));
+        border: 1px solid rgba(34, 197, 94, 0.35);
+        max-height: 280px;
+        overflow: auto;
+      }
+
+      .results h3 {
+        margin: 0 0 0.35rem;
+        font-size: 0.82rem;
+        color: #bbf7d0;
+      }
+
+      .results p {
+        margin: 0;
+        font-size: 0.76rem;
+        color: #d1fae5;
+      }
+
+      .results table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.4rem;
+        font-size: 0.72rem;
+        color: #e5e7eb;
+      }
+
+      .results th,
+      .results td {
+        padding: 0.2rem 0.3rem;
+        border-bottom: 1px solid rgba(55, 65, 81, 0.9);
+        text-align: right;
+      }
+
+      .results th:first-child,
+      .results td:first-child {
+        text-align: left;
+      }
+
+      .results tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.1rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        color: #e5e7eb;
+        background: rgba(37, 99, 235, 0.3);
+        border: 1px solid rgba(59, 130, 246, 0.7);
+      }
+
+      footer {
+        padding: 0.5rem 1.5rem 0.9rem;
+        font-size: 0.7rem;
+        color: #6b7280;
+        border-top: 1px solid rgba(31, 41, 55, 0.9);
+        background: #020617;
+      }
+    </style>
+
+    <!-- Import map pour utiliser three.js et web-ifc-viewer en modules dans main.js -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js",
+          "web-ifc-viewer": "https://cdn.jsdelivr.net/npm/web-ifc-viewer@1.0.217/dist/index.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>Efforts en tête de mur</h1>
+      <p>Prototype de calcul sismique basé sur un modèle IFC (vue 3D + charges globales).</p>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>Modèle IFC &amp; Vue 3D</h2>
+        <small>Charge un fichier IFC, visualise le modèle et prépare l’extraction des murs / charpente.</small>
+
+        <div class="controls-row">
+          <div class="file-input-wrapper">
+            <span>Fichier IFC</span>
+            <input id="ifc-file-input" type="file" accept=".ifc,.IFC" />
+          </div>
+          <span class="tag">
+            <span class="tag-dot"></span>
+            IFC non chargé
+          </span>
+        </div>
+
+        <div id="viewer-container">
+          <div id="viewer-overlay">
+            <span>Sélectionne un fichier IFC pour initialiser la vue 3D et les calculs.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Paramètres sismiques &amp; calcul</h2>
+        <small>Modèle simplifié type méthode statique équivalente (à adapter selon l’Eurocode / règle locale).</small>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="ag">Accélération de référence \(a_g\) [m/s²]</label>
+            <input id="ag" type="number" step="0.01" min="0" value="3.0" />
+          </div>
+
+          <div class="field">
+            <label for="q">Facteur de comportement \(q\)</label>
+            <input id="q" type="number" step="0.1" min="1" value="3.0" />
+          </div>
+
+          <div class="field">
+            <label for="gammaI">Coefficient d’importance \(\gamma_I\)</label>
+            <input id="gammaI" type="number" step="0.1" min="0.5" value="1.0" />
+          </div>
+
+          <div class="field">
+            <label for="mTot">Masse totale approximative [tonnes]</label>
+            <input id="mTot" type="number" step="1" min="0" value="200" />
+          </div>
+
+          <div class="field">
+            <label for="nbNiveaux">Nombre de niveaux porteurs</label>
+            <input id="nbNiveaux" type="number" step="1" min="1" value="1" />
+          </div>
+
+          <div class="field">
+            <label for="dirSeisme">Direction sismique étudiée</label>
+            <select id="dirSeisme">
+              <option value="x">Direction X (longitudinale)</option>
+              <option value="y">Direction Y (transversale)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="ghost-btn" id="btn-reset">Réinitialiser</button>
+          <button class="primary-btn" id="btn-calcul" disabled>
+            Calculer les efforts en tête de mur
+          </button>
+        </div>
+
+        <div class="results" id="results">
+          <h3>En attente de modèle IFC…</h3>
+          <p>
+            Une fois l’IFC chargé, cette zone affichera&nbsp;:
+          </p>
+          <ul style="margin: 0.35rem 0 0.1rem; padding-left: 1.1rem; font-size: 0.72rem; color: #9ca3af;">
+            <li>l’effort sismique global \(F_{base}\)</li>
+            <li>la répartition simplifiée par niveau</li>
+            <li>un tableau d’efforts en tête de mur (par mur porteur identifié)</li>
+          </ul>
+          <p style="margin-top: 0.35rem; font-size: 0.7rem; color: #6b7280;">
+            Pour l’instant, la répartition se fait avec un modèle très simplifié
+            (masse globale + répartition uniforme). On pourra ensuite brancher
+            l’extraction réelle des longueurs de murs et des directions porteuses
+            à partir de l’IFC.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Prototype pédagogique – à adapter et calibrer avec les hypothèses de calcul réelles
+      (règles nationales, Eurocode 8, spectre de réponse, etc.).
+    </footer>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+  </html>
+
